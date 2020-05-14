@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+
+  <div id="app">
+    <div>
+      <el-radio-group v-model="yearSelect" size="mini">
+        <el-radio-button label="year_1">Year 1</el-radio-button>
+        <el-radio-button label="year_2">Year 2</el-radio-button>
+        <el-radio-button label="year_3">Year 3</el-radio-button>
+      </el-radio-group>
+    </div>
+    <svg :width="svgWidth" :height="svgHeight">
+      <g :transform="'translate(' + margin.left + ',' + margin.top + ')'">
+        <g v-for="(row, i) in stack" :key="i">
+          <rect v-for="(block, index) in stack[i]" :key="index" 
+            :title="block.data.values[i] ?  block.data.values[i].narrow : ''"
+            :height="stackScale.y(block[0]) - stackScale.y(block[1])"
+            :width="stackScale.x.bandwidth()"
+            :x="stackScale.x(block.data.key)"
+            :y="stackScale.y(block[1])"
+            :fill="block.data.values[i] ? stackScale.color(block.data.values[i].mid) : '#fff'"
+            stroke="#fff"
+          />
+        </g>
+        <g v-axis:x="stackScale" :transform="`translate(0, ${height})`"></g>
+        <g v-axis:y="stackScale"></g>
+        <text class="axis-label" :x="0-height/2" :y="0-60" transform="rotate(270)" fill="#000">Cost in USD</text>
+      </g>
+    </svg>
+  </div>
+  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+</html>
