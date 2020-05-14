@@ -10,7 +10,7 @@ var app = new Vue({
         margin: {top: 50, left: 100, bottom: 50, right: 50 },
         data:[],
         yearSelect:'year_1',
-        tooltipVisible:false
+        tooltipVisible:false,
     },
     mounted(){
         d3.csv('./data/complete_budget_df.csv').then(data =>{
@@ -86,6 +86,12 @@ var app = new Vue({
             .range(d3.schemeSet2)
             return { x, y,color };
         },
+        total(){
+            return (val, key) => d3.sum(
+                this.data.filter(d => d[key] == val), 
+                d => d[this.yearSelect]
+            )
+        }
     },
     methods: { 
         tooltip(el){
@@ -95,12 +101,6 @@ var app = new Vue({
             this.tooltipVisible = true;
             document.querySelector('#tooltip').innerHTML = `<h1>${el.narrow}</h1><span> Year ${this.yearSelect.split('_')[1]} Cost $${el[this.yearSelect]}</span>`;
         },
-        total(val,key){
-            return d3.sum(
-                this.data.filter(d => d[key] == val), 
-                d => d[this.yearSelect]
-            )
-        }
     },
     directives: {
         axis(el, binding) {
