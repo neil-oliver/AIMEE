@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title></title>
   <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+  <link rel="stylesheet" href='https://fonts.googleapis.com/css?family=DM+Serif+Display|Roboto:300,900&display=swap'>
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 </head>
@@ -20,7 +21,7 @@
     <svg :width="svgWidth" :height="svgHeight">
       <g :transform="'translate(' + margin.left + ',' + margin.top + ')'">
         <g v-for="(row, i) in stack" :key="i">
-          <rect v-for="(block, index) in stack[i]" :key="index" 
+          <rect v-for="(block, index) in stack[i]" :key="index" @mouseover="tooltip(block.data.values[i])" @mouseout='tooltipVisible = false'
             :title="block.data.values[i] ?  block.data.values[i].narrow : ''"
             :height="stackScale.y(block[0]) - stackScale.y(block[1])"
             :width="stackScale.x.bandwidth()"
@@ -35,6 +36,16 @@
         <text class="axis-label" :x="0-height/2" :y="0-60" transform="rotate(270)" fill="#000">Cost in USD</text>
       </g>
     </svg>
+    <div class='legend-block'>
+      <div v-for="(category, i) in mid" :key="i" style="display: inline; padding: 10px">
+        <div :style="{display:'inline-block', width:10 + 'px', height:10+'px', 'background-color': stackScale.color(category)}"></div> {{category}}
+      </div>
+    </div>
+    <transition name="fade">
+      <div v-show="tooltipVisible == true" id='tooltip'>
+        Hello
+      </div>
+    </transition>
   </div>
   <script src="https://unpkg.com/element-ui/lib/index.js"></script>
   <script src="https://d3js.org/d3.v5.min.js"></script>

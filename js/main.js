@@ -8,10 +8,12 @@ var app = new Vue({
         svgHeight : "800",
         margin: {top: 50, left: 100, bottom: 50, right: 50 },
         data:[],
-        yearSelect:'year_1'
+        yearSelect:'year_1',
+        tooltipVisible:false
     },
     mounted(){
         d3.csv('./data/complete_budget_df.csv').then(data =>{
+            this.data.forEach((d,i) => d.index = i)
             this.data = data
         })
     },
@@ -41,7 +43,7 @@ var app = new Vue({
             return stackSetup(this.nested)
         },
         stackScale() {
-            let y = d3.scaleLinear().range([this.height,0]);
+            let y = d3.scaleLinear().range([this.height,0]).nice();
             let x = d3
             .scaleBand()
             .domain(this.broad)
@@ -57,6 +59,14 @@ var app = new Vue({
           },
     },
     methods: { 
+        tooltip(el){
+            tooltip = d3.select('#tooltip')
+                    .style("left", (event.clientX) + "px")		
+                    .style("top", (event.clientY) + "px");	
+            this.tooltipVisible = true;
+            console.log(el)
+            document.querySelector('#tooltip').innerHTML = `<h1>${el.narrow}</h1><span> Year ${this.yearSelect.split('_')[1]} Cost $${el[this.yearSelect]}</span>`;
+        },
     },
     directives: {
         axis(el, binding) {

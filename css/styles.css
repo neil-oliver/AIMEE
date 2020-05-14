@@ -1,9 +1,37 @@
 body{
     text-align: center;
+    font-family: 'Roboto', sans-serif;
+    color:grey;
+    font-size:0.8em;
+    text-transform: uppercase;
 }
 rect{
     transition: all 0.4s ease-in-out 0s
 }
 
+.legend-block{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+#tooltip{
+    position: fixed;			
+    pointer-events: none;	
+    padding:10px;	
+    background-color: #fff;
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 1px;
+}
+
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+.fade-enter, .fade-leave-to{
+opacity: 0;
+}
 
 
