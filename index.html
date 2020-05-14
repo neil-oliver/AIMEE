@@ -31,7 +31,7 @@
               stroke="#fff"
             />
           </g>
-          <text v-for="(cat, indx) in broad" :x="stackScale.x(cat) + stackScale.x.bandwidth()/2"  text-anchor="middle" :y="stackScale.y(total(cat,'broad'))-10">${{total(cat,"broad").toLocaleString()}}</text>
+          <text v-for="(cat, indx) in broad" :key="cat" :x="stackScale.x(cat) + stackScale.x.bandwidth()/2"  text-anchor="middle" :y="stackScale.y(total(cat,'broad'))-10">${{total(cat,"broad").toLocaleString()}}</text>
           <g v-axis:x="stackScale" :transform="`translate(0, ${height})`"></g>
           <g v-axis:y="stackScale"></g>
           <text class="axis-label" :x="0-height/2" :y="0-60" transform="rotate(270)" fill="#000">Cost in USD</text>
@@ -56,7 +56,7 @@
               stroke="#fff"
             />
           </g>
-          <text v-for="(cat, indx) in mid" :x="midStackScale.x(cat) + midStackScale.x.bandwidth()/2"  text-anchor="middle" :y="midStackScale.y(total(cat,'mid'))-10">${{total(cat,"mid").toLocaleString()}}</text>
+          <text v-for="(cat, indx) in mid" :key="cat" :x="midStackScale.x(cat) + midStackScale.x.bandwidth()/2"  text-anchor="middle" :y="midStackScale.y(total(cat,'mid'))-10">${{total(cat,"mid").toLocaleString()}}</text>
           <g v-axis:x="midStackScale" :transform="`translate(0, ${height})`"></g>
           <g v-axis:y="midStackScale"></g>
           <text class="axis-label" :x="0-height/2" :y="0-60" transform="rotate(270)" fill="#000">Cost in USD</text>

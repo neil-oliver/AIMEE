@@ -68,7 +68,7 @@ var app = new Vue({
             let color = d3
             .scaleOrdinal()
             .domain(this.mid)
-            .range(d3.schemeSet3)
+            .range(d3.schemeSet2)
             return { x, y,color };
         },
         midStackScale() {
