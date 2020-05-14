@@ -67,6 +67,12 @@ var app = new Vue({
             console.log(el)
             document.querySelector('#tooltip').innerHTML = `<h1>${el.narrow}</h1><span> Year ${this.yearSelect.split('_')[1]} Cost $${el[this.yearSelect]}</span>`;
         },
+        total(broad){
+            return d3.sum(
+                this.data.filter(d => d.broad == broad), 
+                d => d[this.yearSelect]
+            )
+        }
     },
     directives: {
         axis(el, binding) {

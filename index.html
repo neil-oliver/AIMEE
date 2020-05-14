@@ -31,6 +31,7 @@
             stroke="#fff"
           />
         </g>
+        <text v-for="(cat, indx) in broad" :x="stackScale.x(cat) + stackScale.x.bandwidth()/2"  text-anchor="middle" :y="stackScale.y(total(cat))-10">${{total(cat).toLocaleString()}}</text>
         <g v-axis:x="stackScale" :transform="`translate(0, ${height})`"></g>
         <g v-axis:y="stackScale"></g>
         <text class="axis-label" :x="0-height/2" :y="0-60" transform="rotate(270)" fill="#000">Cost in USD</text>
