@@ -11,35 +11,61 @@
 <body>
 
   <div id="app">
-    <div>
+    <div style="width:100vw;text-align: center;">
       <el-radio-group v-model="yearSelect" size="mini">
         <el-radio-button label="year_1">Year 1</el-radio-button>
         <el-radio-button label="year_2">Year 2</el-radio-button>
         <el-radio-button label="year_3">Year 3</el-radio-button>
       </el-radio-group>
     </div>
-    <svg :width="svgWidth" :height="svgHeight">
-      <g :transform="'translate(' + margin.left + ',' + margin.top + ')'">
-        <g v-for="(row, i) in stack" :key="i">
-          <rect v-for="(block, index) in stack[i]" :key="index" @mouseover="tooltip(block.data.values[i])" @mouseout='tooltipVisible = false'
-            :title="block.data.values[i] ?  block.data.values[i].narrow : ''"
-            :height="stackScale.y(block[0]) - stackScale.y(block[1])"
-            :width="stackScale.x.bandwidth()"
-            :x="stackScale.x(block.data.key)"
-            :y="stackScale.y(block[1])"
-            :fill="block.data.values[i] ? stackScale.color(block.data.values[i].mid) : '#fff'"
-            stroke="#fff"
-          />
+    <div class="vis">
+      <svg :width="svgWidth" :height="svgHeight">
+        <g :transform="'translate(' + margin.left + ',' + margin.top + ')'">
+          <g v-for="(row, i) in stack" :key="i">
+            <rect v-for="(block, index) in stack[i]" :key="index" @mouseover="tooltip(block.data.values[i])" @mouseout='tooltipVisible = false'
+              :height="stackScale.y(block[0]) - stackScale.y(block[1])"
+              :width="stackScale.x.bandwidth()"
+              :x="stackScale.x(block.data.key)"
+              :y="stackScale.y(block[1])"
+              :fill="block.data.values[i] ? stackScale.color(block.data.values[i].mid) : '#fff'"
+              stroke="#fff"
+            />
+          </g>
+          <text v-for="(cat, indx) in broad" :x="stackScale.x(cat) + stackScale.x.bandwidth()/2"  text-anchor="middle" :y="stackScale.y(total(cat,'broad'))-10">${{total(cat,"broad").toLocaleString()}}</text>
+          <g v-axis:x="stackScale" :transform="`translate(0, ${height})`"></g>
+          <g v-axis:y="stackScale"></g>
+          <text class="axis-label" :x="0-height/2" :y="0-60" transform="rotate(270)" fill="#000">Cost in USD</text>
         </g>
-        <text v-for="(cat, indx) in broad" :x="stackScale.x(cat) + stackScale.x.bandwidth()/2"  text-anchor="middle" :y="stackScale.y(total(cat))-10">${{total(cat).toLocaleString()}}</text>
-        <g v-axis:x="stackScale" :transform="`translate(0, ${height})`"></g>
-        <g v-axis:y="stackScale"></g>
-        <text class="axis-label" :x="0-height/2" :y="0-60" transform="rotate(270)" fill="#000">Cost in USD</text>
-      </g>
-    </svg>
-    <div class='legend-block'>
-      <div v-for="(category, i) in mid" :key="i" style="display: inline; padding: 10px">
-        <div :style="{display:'inline-block', width:10 + 'px', height:10+'px', 'background-color': stackScale.color(category)}"></div> {{category}}
+      </svg>
+      <div class='legend-block'>
+        <div v-for="(category, i) in mid" :key="i" style="display: inline; padding: 10px">
+          <div :style="{display:'inline-block', width:10 + 'px', height:10+'px', 'background-color': stackScale.color(category)}"></div> {{category}}
+        </div>
+      </div>
+    </div>
+    <div class="vis">
+      <svg :width="doubleSvgWidth" :height="svgHeight">
+        <g :transform="'translate(' + margin.left + ',' + margin.top + ')'">
+          <g v-for="(row, i) in midStack" :key="i">
+            <rect v-for="(block, index) in midStack[i]" :key="index" @mouseover="tooltip(block.data.values[i])" @mouseout='tooltipVisible = false'
+              :height="midStackScale.y(block[0]) - midStackScale.y(block[1])"
+              :width="midStackScale.x.bandwidth()"
+              :x="midStackScale.x(block.data.key)"
+              :y="midStackScale.y(block[1])"
+              :fill="block.data.values[i] ? midStackScale.color(block.data.values[i].broad) : '#fff'"
+              stroke="#fff"
+            />
+          </g>
+          <text v-for="(cat, indx) in mid" :x="midStackScale.x(cat) + midStackScale.x.bandwidth()/2"  text-anchor="middle" :y="midStackScale.y(total(cat,'mid'))-10">${{total(cat,"mid").toLocaleString()}}</text>
+          <g v-axis:x="midStackScale" :transform="`translate(0, ${height})`"></g>
+          <g v-axis:y="midStackScale"></g>
+          <text class="axis-label" :x="0-height/2" :y="0-60" transform="rotate(270)" fill="#000">Cost in USD</text>
+        </g>
+      </svg>
+      <div class='legend-block'>
+        <div v-for="(category, i) in broad" :key="i" style="display: inline; padding: 10px">
+          <div :style="{display:'inline-block', width:10 + 'px', height:10+'px', 'background-color': midStackScale.color(category)}"></div> {{category}}
+        </div>
       </div>
     </div>
     <transition name="fade">

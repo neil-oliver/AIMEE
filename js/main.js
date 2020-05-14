@@ -6,6 +6,7 @@ var app = new Vue({
     data: {
         svgWidth : "400",
         svgHeight : "800",
+        doubleSvgWidth:"800",
         margin: {top: 50, left: 100, bottom: 50, right: 50 },
         data:[],
         yearSelect:'year_1',
@@ -21,11 +22,17 @@ var app = new Vue({
         width() {
             return this.svgWidth - this.margin.left - this.margin.right;
         },
+        doubleWidth() {
+            return this.doubleSvgWidth - this.margin.left - this.margin.right;
+        },
         height() {
             return this.svgHeight - this.margin.top - this.margin.bottom;
         },
-        nested(){
+        broadNest(){
             return d3.nest().key(d => d.broad).entries(this.data)
+        },
+        midNest(){
+            return d3.nest().key(d => d.mid).entries(this.data)
         },
         broad(){
             return this.data.map(item => item.broad)
@@ -36,11 +43,18 @@ var app = new Vue({
             .filter((item, i, arr) => arr.indexOf(item) === i)
         },
         stack(){
-            let keys = d3.range(d3.max(this.nested.map((d) => d.values.length)))
+            let keys = d3.range(d3.max(this.broadNest.map((d) => d.values.length)))
             let stackSetup = d3.stack()
                 .keys(keys)
                 .value((d,key) => key < d.values.length ? parseInt(d.values[key][this.yearSelect]) : 0 )
-            return stackSetup(this.nested)
+            return stackSetup(this.broadNest)
+        },
+        midStack(){
+            let keys = d3.range(d3.max(this.midNest.map((d) => d.values.length)))
+            let stackSetup = d3.stack()
+                .keys(keys)
+                .value((d,key) => key < d.values.length ? parseInt(d.values[key][this.yearSelect]) : 0 )
+            return stackSetup(this.midNest)
         },
         stackScale() {
             let y = d3.scaleLinear().range([this.height,0]).nice();
@@ -49,14 +63,29 @@ var app = new Vue({
             .domain(this.broad)
             .range([0, this.width])
       
-            y.domain([0,d3.max(this.nested, i => d3.sum(i.values, d => d[this.yearSelect]))]);
+            y.domain([0,d3.max(this.broadNest, i => d3.sum(i.values, d => d[this.yearSelect]))]);
 
             let color = d3
             .scaleOrdinal()
             .domain(this.mid)
             .range(d3.schemeSet3)
             return { x, y,color };
-          },
+        },
+        midStackScale() {
+            let y = d3.scaleLinear().range([this.height,0]).nice();
+            let x = d3
+            .scaleBand()
+            .domain(this.mid)
+            .range([0, this.doubleWidth])
+      
+            y.domain([0,d3.max(this.midNest, i => d3.sum(i.values, d => d[this.yearSelect]))]);
+
+            let color = d3
+            .scaleOrdinal()
+            .domain(this.broad)
+            .range(d3.schemeSet2)
+            return { x, y,color };
+        },
     },
     methods: { 
         tooltip(el){
@@ -64,12 +93,11 @@ var app = new Vue({
                     .style("left", (event.clientX) + "px")		
                     .style("top", (event.clientY) + "px");	
             this.tooltipVisible = true;
-            console.log(el)
             document.querySelector('#tooltip').innerHTML = `<h1>${el.narrow}</h1><span> Year ${this.yearSelect.split('_')[1]} Cost $${el[this.yearSelect]}</span>`;
         },
-        total(broad){
+        total(val,key){
             return d3.sum(
-                this.data.filter(d => d.broad == broad), 
+                this.data.filter(d => d[key] == val), 
                 d => d[this.yearSelect]
             )
         }
